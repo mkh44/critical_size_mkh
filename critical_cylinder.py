@@ -32,6 +32,8 @@ parser.add_argument('--paths', action='store', type=int
                     , help='Trajectories to sample', default=1000000)
 parser.add_argument('--queue', action='store', type=int
                     , help='Queue length', default=10000)
+parser.add_argument('--noplot', action='store_true',
+                    help='Disable all plotting, default=False')
 args = parser.parse_args()
 
 from collections import deque
@@ -420,33 +422,44 @@ while len(queue) > 0 and path_counter < maximum_paths:
     if path_counter % update_interval == 0:
         queue_length.append(len(queue))
         paths.append(len(queue_length) * update_interval)
-        plt.figure(1)
-        plt.cla()
-        plt.tick_params(axis='both', which='major', labelsize=plt_labsiz)
-        plt.plot(paths, numpy.array(queue_length))
-        if len(paths) > 2:
-            p, s = exponential().fit(paths, numpy.array(queue_length))
-            grow.append(p[1])
-            grow_err.append(s[1])
-            if True:
+
+        #only plot if plotting is enabled
+        if not args.noplot:
+            plt.figure(1)
+            plt.cla()
+            plt.tick_params(axis='both', which='major', labelsize=plt_labsiz)
+            plt.plot(paths, numpy.array(queue_length))
+            if len(paths) > 2:
+                p, s = exponential().fit(paths, numpy.array(queue_length))
+                grow.append(p[1])
+                grow_err.append(s[1])
+
                 plt.plot(paths, p[0] * numpy.exp(p[1] * numpy.array(paths)))
                 plt.plot(paths, p[0] * numpy.exp((p[1] + s[1]) * numpy.array(paths)))
                 plt.plot(paths, p[0] * numpy.exp((p[1] - s[1]) * numpy.array(paths)))
-            else:
-                plt.plot(paths, p[0] * (p[1] * numpy.array(paths) + 1.0))
-                plt.plot(paths, p[0] * ((p[1] + s[1]) * numpy.array(paths) + 1.0))
-                plt.plot(paths, p[0] * ((p[1] - s[1]) * numpy.array(paths) + 1.0))
+
             plt.xlabel(r'Paths', fontsize=plt_labsiz)
             plt.ylabel(r'Queued Test Particles', fontsize=plt_labsiz)
-            plt.figure(2)
-            plt.cla()
-            plt.errorbar(paths[2:], grow, yerr=grow_err, fmt='o')
-            plt.xlabel(r'Paths', fontsize=plt_labsiz)
-            plt.ylabel(r'Growth Rate', fontsize=plt_labsiz)
-            plt.tick_params(axis='both', which='major', labelsize=plt_labsiz)
-        plt.pause(0.001)
-    path_counter += 1
-shape.plot_density(3)
+
+                # plt.plot(paths, p[0] * (p[1] * numpy.array(paths) + 1.0))
+                # plt.plot(paths, p[0] * ((p[1] + s[1]) * numpy.array(paths) + 1.0))
+                # plt.plot(paths, p[0] * ((p[1] - s[1]) * numpy.array(paths) + 1.0))
+                # Plot growth-rate evolution
+            if len(paths) > 2:
+                plt.figure(2)
+                plt.cla()
+                plt.errorbar(paths[2:], grow, yerr=grow_err, fmt='o')
+                plt.xlabel(r'Paths', fontsize=plt_labsiz)
+                plt.ylabel(r'Growth Rate', fontsize=plt_labsiz)
+                plt.tick_params(axis='both', which='major', labelsize=plt_labsiz)
+
+            plt.pause(0.001)
+
+        path_counter += 1
+
+
+if not args.noplot:
+    shape.plot_density(3)
 
 # Import numpy again as np for convinience
 import numpy as np
