@@ -457,6 +457,20 @@ reproduction = np.array(reproduction)
 rep_post = reproduction[burnin:]
 
 mu = np.mean(rep_post)
+sigma = np.std(rep_post, ddof=1)
+n = len(rep_post)
+
+# Standard error
+se = sigma / np.sqrt(n)
+
+print("\n=== Criticality diagnostics ===")
+print(f"Mean reproduction number (after burn-in): {mu:.5f} ± {se:.5f}")
+print(f"95% confidence interval: [{mu - 1.96*se:.5f}, {mu + 1.96*se:.5f}]")
+print(f"Burn-in discarded: {burnin} trajectories")
+#code prints reproduction number, standard error and 95% confidence interval.
+# Subcritical: conf int < 1.
+# Supercritical: conf int > 1
+# Critical: conf int covers 1
 
 if len(queue) == 0:
     sys.stderr.write('Stopped.  Queue empty.\n')
