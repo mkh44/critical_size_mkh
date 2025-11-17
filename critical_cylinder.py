@@ -403,6 +403,7 @@ grow = []  # Growth rate (for plotting)
 grow_err = []  # Standard deviation of growth rate (for plotting)
 reproduction = []  # number of new neutrons produced per trajectory
 burnin = int(0.2 * maximum_paths)  # discard first 20% as default
+
 while len(queue) > 0 and path_counter < maximum_paths:
     # Get a new test particle from the queue
     r = queue.pop()
@@ -446,6 +447,17 @@ while len(queue) > 0 and path_counter < maximum_paths:
         plt.pause(0.001)
     path_counter += 1
 shape.plot_density(3)
+
+# Import numpy again as np for convinience
+import numpy as np
+# Convert to numpy
+reproduction = np.array(reproduction)
+
+#Remove Burn-in
+rep_post = reproduction[burnin:]
+
+mu = np.mean(rep_post)
+
 if len(queue) == 0:
     sys.stderr.write('Stopped.  Queue empty.\n')
 else:
