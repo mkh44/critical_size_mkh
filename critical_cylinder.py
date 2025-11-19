@@ -40,8 +40,8 @@ from collections import deque
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-if args.mayavi:
-    from mayavi import mlab
+# if args.mayavi:
+#     from mayavi import mlab
 import numpy
 import random
 from scipy.optimize import curve_fit
@@ -195,23 +195,23 @@ class cube(shape):
         self.bins[i, j, k] += 1
 
     def plot_density(self, figure_index):
-        if args.mayavi:
-            # If we have the volume visualiser available, display
-            # isosurfaces
-            print('Update')
-            mlab.contour3d(self.bins, contours=4, transparent=True)
-            mlab.outline()
-            mlab.show()
+        #if args.mayavi:
+            # # If we have the volume visualiser available, display
+            # # isosurfaces
+            # print('Update')
+            # mlab.contour3d(self.bins, contours=4, transparent=True)
+            # mlab.outline()
+            # mlab.show()
             # yield
-        else:
-            # Otherwise, plot data along a line only
-            plt.figure(figure_index)
-            plt.cla()
-            plt.xlabel(r'$z$ ( m )', fontsize=plt_labsiz)
-            plt.ylabel(r'Density ( au )', fontsize=plt_labsiz)
-            plt.tick_params(axis='both', which='major', labelsize=plt_labsiz)
-            plt.plot(self.x, self.bins[len(self.bins) // 2, len(self.bins) // 2, :])
-            plt.ylim(ymin=0)
+
+        # Otherwise, plot data along a line only
+        plt.figure(figure_index)
+        plt.cla()
+        plt.xlabel(r'$z$ ( m )', fontsize=plt_labsiz)
+        plt.ylabel(r'Density ( au )', fontsize=plt_labsiz)
+        plt.tick_params(axis='both', which='major', labelsize=plt_labsiz)
+        plt.plot(self.x, self.bins[len(self.bins) // 2, len(self.bins) // 2, :])
+        plt.ylim(ymin=0)
 
 
 class sphere(shape):
